@@ -26,11 +26,28 @@ const parameters = {
     spin: 1,
     randomness: 0.2,
     randomnessPower: 3,
-    num: 4
+    num: 4,
+    //Not set yet from https://codepen.io/ykob/pen/avEpdd?editors=1010
+    getRandomInt: function(min, max){
+        return Math.floor(Math.random() * (max - min)) + min
+      },
+      getDegree: function(radian) {
+        return radian / Math.PI * 180
+      },
+      getRadian: function(degrees) {
+        return degrees * Math.PI / 180
+      },
+      getSpherical: function(rad1, rad2, r) {
+        var x = Math.cos(rad1) * Math.cos(rad2) * r
+        var z = Math.cos(rad1) * Math.sin(rad2) * r
+        var y = Math.sin(rad1) * r
+        return [x, y, z]
+      }
 }
 let geometry = null
 let material = null
 let points = null
+
 /**
 * Material
 */
