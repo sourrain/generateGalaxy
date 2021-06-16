@@ -1,0 +1,30 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    color: rgb(194, 191, 191);
+    
+}
+
+html,
+body
+{
+    overflow: hidden;
+    
+}
+button{
+    background-color: black;
+    border: none;
+    text-decoration: none;
+    font-size: 18px;
+    display:block;
+    padding: 5px;
+}
+.webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+    outline: none;
+}
