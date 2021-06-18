@@ -21,7 +21,7 @@ const scene = new THREE.Scene()
 const parameters = {
     count: 10000,
     size: 0.02,
-    branches: 3,
+    branches: 4,
     radius: 5,
     spin: 1,
     randomness: 0.2,
@@ -29,7 +29,7 @@ const parameters = {
     num: 4,
     //Not set yet from https://codepen.io/ykob/pen/avEpdd?editors=1010
     getRandomInt: function(min, max){
-        return Math.floor(Math.random() * (max - min)) + min
+        return Math.floor(Math.random() * ( max - min)) + min
       },
       getDegree: function(radian) {
         return radian / Math.PI * 180
@@ -223,23 +223,24 @@ const generateDonuts = () => {
     points = new THREE.Points(geometry, material)
     scene.add(points)
 }
+
 //Current clicked galaxy shape
 let currentShape = null
 //Link to galaxy shape
 document.querySelector('#galaxy').addEventListener('click', () => {
-    generateGalaxy();
+    generateGalaxy()
     currentShape=generateGalaxy
 })
 document.querySelector('#star').addEventListener('click', () => {
-    generateStar();
+    generateStar()
     currentShape=generateStar
 })
 document.querySelector('#starRiver').addEventListener('click', () => {
-    generateStarRiver();
+    generateStarRiver()
     currentShape = generateStarRiver
 })
 document.querySelector('#donuts').addEventListener('click', () => {
-    generateDonuts();
+    generateDonuts()
     currentShape = generateDonuts
 })
 console.log(currentShape)
