@@ -1,6 +1,10 @@
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import rotateVertexShader from './shaders/rotate/vertex.glsl'
+import rotateFragmentShader from './shaders/rotate/fragment.glsl'
+import milkyWayVertexShader from './shaders/milkyWay/vertex.glsl'
+import milkyWayFragmentShader from './shaders/milkyWay/fragment.glsl'
 
 /**
  * Base
@@ -46,6 +50,7 @@ const parameters = {
 let geometry = null
 let gMaterial = null
 let rMaterial = null
+let mMaterial = null
 let points = null
 let generateGalaxy = null
 
@@ -112,54 +117,32 @@ const rotateMaterial = () =>
             uSize: { value: 30 * renderer.getPixelRatio() },
             uTime: { value: 0 }
         },
-        vertexShader: `
-            uniform float uSize;
-            uniform float uTime;
-            attribute float aScale;
-            attribute vec3 aRandomness;
-
-        void main()
+        vertexShader: rotateVertexShader,
+        fragmentShader: rotateFragmentShader
+    })
+}
+const milkyWayMaterial = () => 
+{
+    mMaterial = new THREE.ShaderMaterial({
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        transparent: true,
+        uniforms:
         {
-            /**
-             * Position
-             */
-            vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-            
-            
-            // Rotate
-            float angle = atan(modelPosition.x, modelPosition.z);
-            float distanceToCenter = length(modelPosition.xz);
-            float angleOffset = distanceToCenter * uTime *0.02;
-            angle += angleOffset;
-            modelPosition.x = cos(angle) * distanceToCenter;
-            modelPosition.z = sin(angle) * distanceToCenter;
+            uSize: { value: 30 * renderer.getPixelRatio() },
+            uTime: { value: 0 },
 
-   
+            uBigWavesElevation: { value: 0.2 },
+        uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
+        uBigWavesSpeed: { value: 0.75 },
 
-            // Randomness
-            modelPosition.xyz += aRandomness;
-
-            vec4 viewPosition = viewMatrix * modelPosition;
-            vec4 projectedPosition = projectionMatrix * viewPosition;
-                   
-            gl_Position = projectedPosition;
-            /**
-             * Size
-             */
-            gl_PointSize = uSize * aScale;
-            gl_PointSize *= (1.0 / - viewPosition.z);
-        }
-        `,
-        fragmentShader: `
-        void main()
-        {
-            float strength = 0.05/distance(gl_PointCoord, vec2(0.5));
-            strength *= 1.5;
-            
-            gl_FragColor = vec4(strength,strength, strength, strength);
-        }
-        
-        `
+        uSmallWavesElevation: { value: 0.15 },
+        uSmallWavesFrequency: { value: 3 },
+        uSmallWavesSpeed: { value: 0.2 },
+        uSmallIterations: { value: 4 }
+        },
+        vertexShader: milkyWayVertexShader,
+        fragmentShader: milkyWayFragmentShader
     })
 }
 
@@ -254,47 +237,13 @@ function star()
 }
 function milkyWay() 
 {
-    geometry = new THREE.BufferGeometry()
+    geometry = new THREE.PlaneGeometry( 50, 5, 100 ,20)
     generateGalaxy = milkyWay
 
-    const positions = new Float32Array(parameters.count * 3)
-    const randomness = new Float32Array(parameters.count * 3)
-    const scales = new Float32Array(parameters.count * 1)
-
-    for (let i = 0; i < parameters.count; i++) {
-
-        const i3 = i * 3
-
-        const radius = Math.random() * parameters.radius
-
-        parameters.count = 10000
-        parameters.spin = 0
-        parameters.randomness = 0.5
-        parameters.randomnessPower = 4
-
-        const randomX = Math.random() * parameters.randomness * radius - 0.5
-        const randomY = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius
-        const randomZ = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : - 1) * parameters.randomness * radius
-        const waving = 10
-        positions[i3] = randomX 
-        positions[i3 + 1] = Math.sin(randomX * waving) 
-        positions[i3 + 2] = randomX 
-
-        randomness[i3] = randomX
-        randomness[i3 + 1] = randomY
-        randomness[i3 + 2] = randomZ
-
-        //Scale
-        scales[i] = Math.random()
-
-    }
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    geometry.setAttribute('aRandomness', new THREE.BufferAttribute(randomness, 3))
-    geometry.setAttribute('aScale', new THREE.BufferAttribute(scales, 1))
     /**
      * Points
      */
-    points = new THREE.Points(geometry, gMaterial)
+    points = new THREE.Points(geometry,gMaterial )
     scene.add(points)  
 }
 function donuts() 
@@ -435,6 +384,7 @@ function raycast(e, func) {
  * Change Galaxy
  */
 rotateMaterial()
+milkyWayMaterial()
 galaxy()
 function changeGalaxy() {
   if (generateGalaxy === galaxy) 
