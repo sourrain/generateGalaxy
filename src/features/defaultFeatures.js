@@ -1,5 +1,6 @@
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
+import { Vector2 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 /**
@@ -15,7 +16,7 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 //Mouse
-const mouse = new THREE.Vector2()
+const mouse = new Vector2()
 document.addEventListener('mousemove', onDocumentMouseMove, false);
 
 function onDocumentMouseMove(event) {
@@ -24,17 +25,75 @@ function onDocumentMouseMove(event) {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
     //console.log(mouse.x + ", " + mouse.y);
 }
+//Subtraction Vectors
+function substract(a, b) {
+    const aArray = [a.x, a.y]
+    const bArray = [b.x, b.y]
+    const xArray = aArray.map(
+        function (item, index) {
+            // In this case item correspond to currentValue of array a, 
+            // using index to get value from array b
+            return item - bArray[index];
+        }
+    )
+    return xArray
+
+}
 
 /**
- * Box
+ * Objects
  */
-const box = new THREE.Mesh
-    (
-        new THREE.BoxBufferGeometry(1, 1, 1),
-        new THREE.MeshBasicMaterial()
-    )
-scene.add(box)
+let attractor
+let movers = []
 
+//Create Attractor
+const material = new THREE.MeshBasicMaterial()
+
+class Attractor {
+    constructor() {
+        const attractorMesh = new THREE.Mesh
+            (
+                new THREE.SphereGeometry(0.5, 32, 32),
+                material
+            )
+        this.position = new Vector2(0, 0)
+        this.mass = 100
+        this.r = this.mass * 2
+        scene.add(attractorMesh)
+    }
+    attract(mover) {
+        const force = new Vector2(substract(this.position, mover.position))
+        const distanceSq = force.y - force.x
+        const G = 5
+        const strength = G * (this.mass * mover.mass) / distanceSq
+        force * strength
+        mover * force
+    }
+}
+
+//Create Mover
+class Mover {
+    constructor() {
+        const moverMesh = new THREE.Mesh
+            (
+                new THREE.BoxBufferGeometry(0.5, 0.5, 0.5),
+                material
+            )
+        scene.add(moverMesh)
+        this.position = new Vector2(0, 0)
+        this.mass = 100
+        this.r = this.mass * 2
+        this.velocity = new Vector2(Math.random(), Math.random())
+        this.acceleration = new Vector2(0, 0)
+    }
+}
+
+//Add Attractor
+attractor = new Attractor
+//Add Movers
+for (let i = 0; i < 8; i++) {
+    movers[i] = new Mover
+}
 
 //Mapping value
 function mouseMap(value, low1, high1, low2, high2) {
@@ -94,6 +153,12 @@ const clock = new THREE.Clock()
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
+    //Update Mover
+    for (let mover of movers) {
+
+        attractor.attract(mover)
+
+    }
     // Update controls
     controls.update()
 
