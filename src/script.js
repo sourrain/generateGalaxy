@@ -52,7 +52,7 @@ function saveAsImage() {
     try {
         var strMime = "image/jpeg"
         imgData = renderer.domElement.toDataURL(strMime)
-        //document.getElementById('twitter-link').setAttribute('data-url', imgData)
+        document.getElementById('twitter-link').setAttribute('data-url', imgData)
         console.log("saved")
         saveFile(imgData, "test.jpg")
     } catch (e) {
