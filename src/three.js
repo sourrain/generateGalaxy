@@ -26,7 +26,7 @@ const scene = new THREE.Scene()
 const parameters = {
     count: 10000,
     size: 0.02,
-    branches: 2,
+    branches: 5,
     radius: 5,
     spin: 1,
     randomness: 0.2,
