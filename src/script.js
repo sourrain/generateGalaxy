@@ -5,35 +5,30 @@ import './storge.js'
 /**
  * Modal
  */
-// Get the modal
-var modal = document.getElementById("myModal")
+var openModal = document.getElementById("openModal")
+var infoModal = document.getElementById("infoModal")
+var infoBtn = document.getElementById("infoBtn")
+var shareModal = document.getElementById("shareModal")
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0]
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function () {
-    modal.style.display = "none"
+// Close OpenModal
+openModal.onclick = () => {
+    openModal.style.display = "none"
+    console.log('Open Modal closed')
 }
-// When the user clicks anywhere outside of the modal, close it
+
+//Get infoModal
+infoBtn.onclick = () => {
+    infoModal.style.display = "flex"
+    console.log('Open Info Modal')
+}
+
 window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = "none"
+    console.log(event.target)
+    if (event.target == infoBtn) {
+        infoModal.style.display = "none"
+        console.log('Close Info Modal')
     }
 }
-
-
-//Get openModal
-window.onload = function () {
-    var openModal = document.getElementById("openModal")
-
-    // When the user clicks anywhere outside of the modal, close it
-    openModal.onclick = function () {
-        openModal.style.display = "none"
-        console.log('Open Modal closed')
-    }
-}
-
 
 /**
  * Save Screenshot
@@ -52,40 +47,50 @@ var saveFile = function (strData, filename) {
     }
 }
 function saveAsImage() {
-    var imgData, imgNode
+    var imgData
 
     try {
         var strMime = "image/jpeg"
         imgData = renderer.domElement.toDataURL(strMime)
+        //document.getElementById('twitter-link').setAttribute('data-url', imgData)
         console.log("saved")
         saveFile(imgData, "test.jpg")
     } catch (e) {
         console.log(e);
-        return;
+        return
     }
-
 }
-/**
- * Download and Share
- */
+
+
+// Get Share Modal
 document.body.onkeyup = function (e) {
     if (e.keyCode == 32 || 'Spacebar') {
         saveAsImage()
-        modal.style.display = "block"
-        firebase.storage().ref('users/' + currentUser.uid + '/galaxy.jpg').then(
-            (e) => {
-                console.log(e.task)
-            })
+        shareModal.style.display = "block"
+        console.log('Open Share Modal')
+        // firebase.storage().ref('users/' + currentUser.uid + '/galaxy.jpg').then(
+        //     (e) => {
+        //         console.log(e.task)
+        //     })
 
-        firebase.firestore().collection('galaxys').doc().set({
-            title: 'starring night'
+        // firebase.firestore().collection('galaxys').doc().set({
+        //     title: 'starring night'
 
-        }).then(
-            console.log('screenshot stored')
-        )
+        // }).then(
+        //     console.log('screenshot stored')
+        // )
 
     }
 
 }
+
+// Close Share Modal
+window.onclick = function (event) {
+    if (event.target == shareModal) {
+        shareModal.style.display = "none"
+        console.log('Close Share Modal')
+    }
+}
+
 
 

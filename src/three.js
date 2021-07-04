@@ -5,6 +5,7 @@ import rotateVertexShader from './shaders/rotate/vertex.glsl'
 import rotateFragmentShader from './shaders/rotate/fragment.glsl'
 import milkyWayVertexShader from './shaders/milkyWay/vertex.glsl'
 import milkyWayFragmentShader from './shaders/milkyWay/fragment.glsl'
+//import changeGalaxy from './changeGalaxy-animation.js'
 
 /**
  * Base
@@ -25,7 +26,7 @@ const scene = new THREE.Scene()
 const parameters = {
     count: 10000,
     size: 0.02,
-    branches: 5,
+    branches: 2,
     radius: 5,
     spin: 1,
     randomness: 0.2,
@@ -55,8 +56,7 @@ let points = null
 let generateGalaxy = null
 
 //Material
-const generateMaterial = () => 
-{
+const generateMaterial = () => {
     gMaterial = new THREE.ShaderMaterial({
         depthWrite: false,
         blending: THREE.AdditiveBlending,
@@ -104,10 +104,8 @@ const generateMaterial = () =>
         
         `
     })
-    console.log('generateM')
 }
-const rotateMaterial = () => 
-{
+const rotateMaterial = () => {
     rMaterial = new THREE.ShaderMaterial({
         depthWrite: false,
         blending: THREE.AdditiveBlending,
@@ -121,8 +119,7 @@ const rotateMaterial = () =>
         fragmentShader: rotateFragmentShader
     })
 }
-const milkyWayMaterial = () => 
-{
+const milkyWayMaterial = () => {
     mMaterial = new THREE.ShaderMaterial({
         depthWrite: false,
         blending: THREE.AdditiveBlending,
@@ -133,13 +130,13 @@ const milkyWayMaterial = () =>
             uTime: { value: 0 },
 
             uBigWavesElevation: { value: 0.2 },
-        uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
-        uBigWavesSpeed: { value: 0.75 },
+            uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
+            uBigWavesSpeed: { value: 0.75 },
 
-        uSmallWavesElevation: { value: 0.15 },
-        uSmallWavesFrequency: { value: 3 },
-        uSmallWavesSpeed: { value: 0.2 },
-        uSmallIterations: { value: 4 }
+            uSmallWavesElevation: { value: 0.15 },
+            uSmallWavesFrequency: { value: 3 },
+            uSmallWavesSpeed: { value: 0.2 },
+            uSmallIterations: { value: 4 }
         },
         vertexShader: milkyWayVertexShader,
         fragmentShader: milkyWayFragmentShader
@@ -147,10 +144,21 @@ const milkyWayMaterial = () =>
 }
 
 //Geometry
-function galaxy() 
-{
+function galaxy() {
+    if (points !== null) {
+        geometry.dispose()
+        if (rMaterial !== null) {
+            rMaterial.dispose()
+        }
+        if (gMaterial !== null) {
+            gMaterial.dispose()
+        }
+        scene.remove(points)
+    }
+    generateMaterial()
+
     geometry = new THREE.BufferGeometry()
-    generateGalaxy =galaxy
+    generateGalaxy = galaxy
     const positions = new Float32Array(parameters.count * 3)
     const randomness = new Float32Array(parameters.count * 3)
     const scales = new Float32Array(parameters.count * 1)
@@ -191,12 +199,24 @@ function galaxy()
          */
     points = new THREE.Points(geometry, rMaterial)
     scene.add(points)
-    
+
 }
-function star() 
-{
+function star() {
+
+    if (points !== null) {
+        geometry.dispose()
+        if (rMaterial !== null) {
+            rMaterial.dispose()
+        }
+        if (gMaterial !== null) {
+            gMaterial.dispose()
+        }
+        scene.remove(points)
+    }
+    generateMaterial()
+
     geometry = new THREE.BufferGeometry()
-    generateGalaxy=star
+    generateGalaxy = star
 
     const positions = new Float32Array(parameters.count * 3)
     const randomness = new Float32Array(parameters.count * 3)
@@ -232,22 +252,44 @@ function star()
      * Points
      */
     points = new THREE.Points(geometry, gMaterial)
-  
+
     scene.add(points)
 }
-function milkyWay() 
-{
-    geometry = new THREE.PlaneGeometry( 50, 5, 100 ,20)
+function milkyWay() {
+
+    if (points !== null) {
+        geometry.dispose()
+        if (rMaterial !== null) {
+            rMaterial.dispose()
+        }
+        if (gMaterial !== null) {
+            gMaterial.dispose()
+        }
+        scene.remove(points)
+    }
+    rotateMaterial()
+    geometry = new THREE.PlaneGeometry(50, 5, 100, 20)
     generateGalaxy = milkyWay
 
     /**
      * Points
      */
-    points = new THREE.Points(geometry,gMaterial )
-    scene.add(points)  
+    points = new THREE.Points(geometry, gMaterial)
+    scene.add(points)
 }
-function donuts() 
-{
+function donuts() {
+
+    if (points !== null) {
+        geometry.dispose()
+        if (rMaterial !== null) {
+            rMaterial.dispose()
+        }
+        if (gMaterial !== null) {
+            gMaterial.dispose()
+        }
+        scene.remove(points)
+    }
+    rotateMaterial()
     geometry = new THREE.BufferGeometry()
     generateGalaxy = donuts
 
@@ -292,19 +334,18 @@ function donuts()
      */
     points = new THREE.Points(geometry, rMaterial)
     scene.add(points)
-    
+
 }
 
 /**
  * Sizes
  */
-const sizes = 
+const sizes =
 {
     width: window.innerWidth,
     height: window.innerHeight
 }
-window.addEventListener('resize', () => 
-{
+window.addEventListener('resize', () => {
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -340,6 +381,7 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
 //Adding GUI
 let GUIfolder = gui.addFolder('Tweak Your Galaxy')
 //gui.remember(GUIfolder)
@@ -364,90 +406,93 @@ const addGUI = (generate) => {
 /**
  * Raycaster
  */
+var titleBtn = document.getElementById("title")
+
 document.addEventListener("dblclick", (e) => raycast(e, changeGalaxy))
+titleBtn.onclick = () => {
+    changeGalaxy()
+    const audioHover = new Audio('/beep.mp3');
+    audioHover.play()
+    console.log('change galaxy')
+}
 
 function raycast(e, func) {
-  e.preventDefault()
-  const raycaster = new THREE.Raycaster()
-  const mouse = new THREE.Vector2()
 
-  mouse.x = (e.clientX / window.innerWidth) * 2 - 1
-  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+    e.preventDefault()
+    const raycaster = new THREE.Raycaster()
+    const mouse = new THREE.Vector2()
 
-  raycaster.setFromCamera(mouse, camera)
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+
+    raycaster.setFromCamera(mouse, camera)
     func()
     const audioHover = new Audio('/beep.mp3');
-        audioHover.play()
+    audioHover.play()
+    console.log('change galaxy')
 }
 
 /**
  * Change Galaxy
  */
+//Dont know how to seperate this func into another file
 rotateMaterial()
 milkyWayMaterial()
 galaxy()
-function changeGalaxy() {
-  if (generateGalaxy === galaxy) 
-  {
-     if (points !== null) {
-        geometry.dispose()
-        if (rMaterial !== null) {
-        rMaterial.dispose()
-        }
-        if (gMaterial !== null) {
-        gMaterial.dispose()
-        }
-        scene.remove(points)
-    }
-    generateMaterial()
-    star()
-  }
-   else if (generateGalaxy === star) 
-  {
-    if (points !== null) {
-        geometry.dispose()
-        if (rMaterial !== null) {
-        rMaterial.dispose()
-        }
-        if (gMaterial !== null) {
-        gMaterial.dispose()
-        }
-        scene.remove(points)
-    }
-    generateMaterial()
-    milkyWay()
 
-  }
-   else if (generateGalaxy === milkyWay) 
-   {
-    if (points !== null) {
-        geometry.dispose()
-        if (rMaterial !== null) {
-        rMaterial.dispose()
+const changeGalaxy = () => {
+    if (generateGalaxy === galaxy) {
+        if (points !== null) {
+            geometry.dispose()
+            if (rMaterial !== null) {
+                rMaterial.dispose()
+            }
+            if (gMaterial !== null) {
+                gMaterial.dispose()
+            }
+            scene.remove(points)
         }
-        if (gMaterial !== null) {
-        gMaterial.dispose()
-        }
-        scene.remove(points)
+        star()
     }
-    rotateMaterial()
-    donuts()
-  }
-   else if (generateGalaxy === donuts) 
-   {
-    if (points !== null) {
-        geometry.dispose()
-        if (rMaterial !== null) {
-        rMaterial.dispose()
+    else if (generateGalaxy === star) {
+        if (points !== null) {
+            geometry.dispose()
+            if (rMaterial !== null) {
+                rMaterial.dispose()
+            }
+            if (gMaterial !== null) {
+                gMaterial.dispose()
+            }
+            scene.remove(points)
         }
-        if (gMaterial !== null) {
-        gMaterial.dispose()
-        }
-        scene.remove(points)
+        milkyWay()
     }
-    rotateMaterial()
-    galaxy()
-  } 
+    else if (generateGalaxy === milkyWay) {
+        if (points !== null) {
+            geometry.dispose()
+            if (rMaterial !== null) {
+                rMaterial.dispose()
+            }
+            if (gMaterial !== null) {
+                gMaterial.dispose()
+            }
+            scene.remove(points)
+        }
+        donuts()
+    }
+    else if (generateGalaxy === donuts) {
+        if (points !== null) {
+            geometry.dispose()
+            if (rMaterial !== null) {
+                rMaterial.dispose()
+            }
+            if (gMaterial !== null) {
+                gMaterial.dispose()
+            }
+            scene.remove(points)
+        }
+        galaxy()
+    }
 }
 /**
  * Animate
@@ -461,7 +506,13 @@ const tick = () => {
 
     //Update rotation
     points.rotation.y = 0.02 * elapsedTime
+
     //waving = elapsedTime
+
+    //Update branches
+    //current function execute each 5sec with different branches
+    //parameters.branches = Math.floor(elapsedTime + 1)
+    //console.log(parameters.branches)
 
     // Update controls
     controls.update()

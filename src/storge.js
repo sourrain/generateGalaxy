@@ -2,7 +2,7 @@
 // import "https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"
 // import "https://www.gstatic.com/firebasejs/5.6.0/firebase-firestore.js"
 // import "https://www.gstatic.com/firebasejs/5.6.0/firebase-storage.js"
- 
+
 
 // var config = {
 //     apiKey: "AIzaSyBr00UudkZCEElACfSjzISeicCwfTCYDB8",
@@ -17,8 +17,7 @@
 //      firebase.initializeApp(config)
 
 //     const db = firebase.firestore()
-   
-   
+
+
 //        // update firestore settings
 //        db.settings({ timestampsInSnapshots: true })
-console.log('f')
