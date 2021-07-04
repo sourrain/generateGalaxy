@@ -1,6 +1,5 @@
 import './style.css'
 import './three.js'
-import './storge.js'
 
 /**
  * Modal
@@ -68,18 +67,6 @@ document.body.onkeyup = function (e) {
         saveAsImage()
         shareModal.style.display = "block"
         console.log('Open Share Modal')
-        // firebase.storage().ref('users/' + currentUser.uid + '/galaxy.jpg').then(
-        //     (e) => {
-        //         console.log(e.task)
-        //     })
-
-        // firebase.firestore().collection('galaxys').doc().set({
-        //     title: 'starring night'
-
-        // }).then(
-        //     console.log('screenshot stored')
-        // )
-
     }
 
 }
