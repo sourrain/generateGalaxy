@@ -1,2 +1,2 @@
 import './style.css'
-import './features/defaultFeatures.js'
+import './features/gravitationFeature.js'

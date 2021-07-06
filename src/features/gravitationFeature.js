@@ -25,8 +25,9 @@ function onDocumentMouseMove(event) {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
     //console.log(mouse.x + ", " + mouse.y);
 }
-//Subtraction Vectors
+//Subtraction Vectors: a - b
 function substract(a, b) {
+
     const aArray = [a.x, a.y]
     const bArray = [b.x, b.y]
     const xArray = aArray.map(
@@ -36,19 +37,80 @@ function substract(a, b) {
             return item - bArray[index];
         }
     )
-    return xArray
+    const res = new Vector2(
+        xArray[0],
+        xArray[1]
+    )
+    return res
 
 }
+
+//Add Vectors: a + b
+function add(a, b) {
+
+    const aArray = [a.x, a.y]
+    const bArray = [b.x, b.y]
+    const res = new Vector2(
+        a.x + b.x,
+        a.y + b.y
+    )
+    return res
+
+}
+//const a = new Vector2(-2, 4)
+//const b = new Vector2(9, -4)
+//console.log(substract(a, b))
+
+//Vector a Magnitude Squared
+function magSquared(a) {
+    const aArray = [a.x, a.y]
+    const magSq = a.x * a.x + a.y * a.y
+    return magSq
+}
+//console.log(magSquared(a))
+
+//Reset the magitude of the vector a
+function setMag(a, mag) {
+    const aArray = [a.x, a.y]
+    const magArray = [mag.x, mag.y]
+    const res = new Vector2(
+        a.x / Math.abs(a.x) * Math.abs(mag.x),
+        a.y / Math.abs(a.y) * Math.abs(mag.y)
+    )
+    return res
+}
+//console.log(setMag(b, a))
 
 /**
  * Objects
  */
 let attractor
 let movers = []
-
-//Create Attractor
 const material = new THREE.MeshBasicMaterial()
 
+//Create Mover
+class Mover {
+    constructor() {
+        const moverMesh = new THREE.Mesh
+            (
+                new THREE.BoxBufferGeometry(0.5, 0.5, 0.5),
+                material
+            )
+        scene.add(moverMesh)
+        this.position = new Vector2(0, 0)
+        //moverMesh.position.set(this.position.x, this.position.y, 0)
+
+        this.mass = 100
+        this.r = this.mass * 2
+        this.velocity = new Vector2(Math.random(), Math.random())
+        this.acceleration = new Vector2(0, 0)
+    }
+    applyForce(force) {
+        add(force, this.acceleration)
+    }
+}
+
+//Create Attractor
 class Attractor {
     constructor() {
         const attractorMesh = new THREE.Mesh
@@ -62,29 +124,19 @@ class Attractor {
         scene.add(attractorMesh)
     }
     attract(mover) {
-        const force = new Vector2(substract(this.position, mover.position))
-        const distanceSq = force.y - force.x
-        const G = 5
-        const strength = G * (this.mass * mover.mass) / distanceSq
-        force * strength
-        mover * force
-    }
-}
 
-//Create Mover
-class Mover {
-    constructor() {
-        const moverMesh = new THREE.Mesh
-            (
-                new THREE.BoxBufferGeometry(0.5, 0.5, 0.5),
-                material
-            )
-        scene.add(moverMesh)
-        this.position = new Vector2(0, 0)
-        this.mass = 100
-        this.r = this.mass * 2
-        this.velocity = new Vector2(Math.random(), Math.random())
-        this.acceleration = new Vector2(0, 0)
+        //Get a vector that points from mover to the attractor
+        const theVector = new Vector2(substract(this.position, mover.position))
+
+        const distanceSquared = magSquared(theVector)
+        const massMutation = this.mass * mover.mass
+        const G = 5
+        //Calculate the magnitude of the force vector based on Gravitational Attraction
+        const theforceMag = massMutation / distanceSquared * G
+
+        //Force = theVectorMag * theVectorUnit
+        const force = setMag(theVector, theforceMag)
+        mover.applyForce(force)
     }
 }
 
@@ -93,6 +145,7 @@ attractor = new Attractor
 //Add Movers
 for (let i = 0; i < 8; i++) {
     movers[i] = new Mover
+    //Mover.position = new Vector2(i, i)
 }
 
 //Mapping value
@@ -156,7 +209,7 @@ const tick = () => {
     //Update Mover
     for (let mover of movers) {
 
-        attractor.attract(mover)
+        //attractor.attract(mover)
 
     }
     // Update controls
