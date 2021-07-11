@@ -14,32 +14,43 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-//Mouse
-const mouse = new THREE.Vector2()
-document.addEventListener('mousemove', onDocumentMouseMove, false);
-
-function onDocumentMouseMove(event) {
-    event.preventDefault()
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-    //console.log(mouse.x + ", " + mouse.y);
+/**
+ * Load images
+ */
+function getRandomInt(max) {
+    // number between 1 & max
+    return (Math.floor(Math.random() * Math.floor(max))) + 1
 }
+
+
 
 /**
  * Box
  */
-const box = new THREE.Mesh
-    (
-        new THREE.BoxBufferGeometry(1, 1, 1),
-        new THREE.MeshBasicMaterial()
-    )
-scene.add(box)
 
 
-//Mapping value
-function mouseMap(value, low1, high1, low2, high2) {
-    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-}
+var texture = new THREE.TextureLoader().load('./digitalPosts/' + getRandomInt(5) + '.png')
+console.log(texture)
+var geometry = new THREE.PlaneGeometry(texture.width, texture.height, 10, 10)
+
+var material = new THREE.MeshPhongMaterial({
+    map: texture,
+    side: THREE.DoubleSide,
+    transparent: true,
+    specular: 0x9e9e9e,
+    shininess: 5,
+    reflectivity: 0.5,
+    refractionRatio: 0.5
+})
+var digitalPost = new THREE.Mesh(geometry, material)
+scene.add(digitalPost)
+
+/**
+ * Lights
+ */
+var light = new THREE.DirectionalLight(0xffffff, 0.8);
+light.position.set(0, 0, 100).normalize();
+scene.add(light)
 
 /**
  * Sizes
@@ -85,6 +96,7 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.setClearColor(0xfffff0, 1)
 
 /**
  * Animate
