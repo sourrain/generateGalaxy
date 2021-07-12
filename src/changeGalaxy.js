@@ -1,7 +1,7 @@
 /**
  * Change Galaxy
  */
-const changeGalaxy = () => {
+export const changeGalaxy = () => {
   rotateMaterial()
   milkyWayMaterial()
   galaxy()
