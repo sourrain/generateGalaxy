@@ -22,28 +22,34 @@ function getRandomInt(max) {
     return (Math.floor(Math.random() * Math.floor(max))) + 1
 }
 
-
-
 /**
- * Box
+ * Plane
  */
+var geometry = new THREE.PlaneGeometry(5, 5, 10, 10)
 
+for (let i = 0; i < 50; i++) {
 
-var texture = new THREE.TextureLoader().load('./digitalPosts/' + getRandomInt(5) + '.png')
-console.log(texture)
-var geometry = new THREE.PlaneGeometry(texture.width, texture.height, 10, 10)
+    //contructor
+    const texture = new THREE.TextureLoader().load('./digitalPosts/' + getRandomInt(5) + '.png')
+    const material = new THREE.MeshPhongMaterial({
+        map: texture,
+        side: THREE.DoubleSide,
+        transparent: true,
+        specular: 0x9e9e9e,
+        shininess: 5,
+        reflectivity: 0.5,
+        refractionRatio: 0.5
+    })
+    const digitalPost = new THREE.Mesh(geometry, material)
 
-var material = new THREE.MeshPhongMaterial({
-    map: texture,
-    side: THREE.DoubleSide,
-    transparent: true,
-    specular: 0x9e9e9e,
-    shininess: 5,
-    reflectivity: 0.5,
-    refractionRatio: 0.5
-})
-var digitalPost = new THREE.Mesh(geometry, material)
-scene.add(digitalPost)
+    //Show
+    digitalPost.scale.set(i * 0.001, i * 0.001)
+    digitalPost.position.x = i * 2 * Math.random() * 0.01
+    digitalPost.position.y = i * 2 * Math.random() * 0.01
+    digitalPost.position.z = i * 3 * Math.random() * 0.01
+    scene.add(digitalPost)
+
+}
 
 /**
  * Lights
