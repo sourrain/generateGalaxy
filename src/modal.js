@@ -1,15 +1,14 @@
-/**
- * Modal
- */
 var openModal = document.getElementById("openModal")
 var infoModal = document.getElementById("infoModal")
 var infoBtn = document.getElementById("infoBtn")
 var shareModal = document.getElementById("shareModal")
 
 // Close OpenModal
-openModal.onclick = () => {
-    openModal.style.display = "none"
-    console.log('Open Modal closed')
+if (openModal !== null) {
+    openModal.onclick = () => {
+        openModal.style.display = "none"
+        console.log('Open Modal closed')
+    }
 }
 
 //Get infoModal
@@ -42,20 +41,22 @@ var saveFile = function (strData, filename) {
         console.log("saved")
     }
 }
-function saveAsImage() {
-    var imgData
 
-    try {
-        var strMime = "image/jpeg"
-        imgData = renderer.domElement.toDataURL(strMime)
-        document.getElementById('twitter-link').setAttribute('data-url', imgData)
-        console.log("saved")
-        saveFile(imgData, "test.jpg")
-    } catch (e) {
-        console.log(e);
-        return
-    }
-}
+// import renderer from './three.js'
+// function saveAsImage() {
+//     var imgData
+
+//     try {
+//         var strMime = "image/jpeg"
+//         imgData = renderer.domElement.toDataURL(strMime)
+//         document.getElementById('twitter-link').setAttribute('data-url', imgData)
+//         console.log("saved")
+//         saveFile(imgData, "test.jpg")
+//     } catch (e) {
+//         console.log(e);
+//         return
+//     }
+// }
 
 
 // Get Share Modal

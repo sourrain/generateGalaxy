@@ -1,65 +1,13 @@
 /**
  * Change Galaxy
  */
-export const changeGalaxy = () => {
-  rotateMaterial()
-  milkyWayMaterial()
-  galaxy()
-  if (generateGalaxy === galaxy) {
-    if (points !== null) {
-      geometry.dispose()
-      if (rMaterial !== null) {
-        rMaterial.dispose()
-      }
-      if (gMaterial !== null) {
-        gMaterial.dispose()
-      }
-      scene.remove(points)
-    }
-    generateMaterial()
-    star()
-  }
-  else if (generateGalaxy === star) {
-    if (points !== null) {
-      geometry.dispose()
-      if (rMaterial !== null) {
-        rMaterial.dispose()
-      }
-      if (gMaterial !== null) {
-        gMaterial.dispose()
-      }
-      scene.remove(points)
-    }
-    generateMaterial()
-    milkyWay()
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max) + 2
+}
+//link to random galaxy.html page
+export function changeGalaxy() {
 
-  }
-  else if (generateGalaxy === milkyWay) {
-    if (points !== null) {
-      geometry.dispose()
-      if (rMaterial !== null) {
-        rMaterial.dispose()
-      }
-      if (gMaterial !== null) {
-        gMaterial.dispose()
-      }
-      scene.remove(points)
-    }
-    rotateMaterial()
-    donuts()
-  }
-  else if (generateGalaxy === donuts) {
-    if (points !== null) {
-      geometry.dispose()
-      if (rMaterial !== null) {
-        rMaterial.dispose()
-      }
-      if (gMaterial !== null) {
-        gMaterial.dispose()
-      }
-      scene.remove(points)
-    }
-    rotateMaterial()
-    galaxy()
-  }
+  window.location.href =
+    "./galaxy" + getRandomInt(3) + ".html"
+
 }

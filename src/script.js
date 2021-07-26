@@ -1,3 +1,3 @@
 import './style.css'
-import './three.js'
 import './modal.js'
+import './galaxy1.js'

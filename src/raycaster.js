@@ -1,9 +1,11 @@
+import { changeGalaxy } from './changeGalaxy.js'
+import * as THREE from 'three'
+
 /**
  * Raycaster
  */
 var titleBtn = document.getElementById("title")
 
-document.addEventListener("dblclick", (e) => raycast(e, changeGalaxy))
 titleBtn.onclick = () => {
     changeGalaxy()
     const audioHover = new Audio('/beep.mp3');
@@ -11,7 +13,9 @@ titleBtn.onclick = () => {
     console.log('change galaxy')
 }
 
-function raycast(e, func) {
+document.addEventListener("dblclick", (e) => raycast(e, changeGalaxy))
+
+export function raycast(e, func) {
 
     e.preventDefault()
     const raycaster = new THREE.Raycaster()
